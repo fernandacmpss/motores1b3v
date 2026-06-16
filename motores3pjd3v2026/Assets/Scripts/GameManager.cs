@@ -12,7 +12,12 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public GameState estadoAtual;
+    private GameState estadoAtual;
+
+    public GameState EstadoAtual
+    {
+        get { return estadoAtual; }
+    }
 
     private void Awake()
     {
@@ -29,13 +34,16 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Começa no estado inicial e vai pra Splash
+        Debug.Log("Estado atual: " + estadoAtual);
+
         MudarEstado(GameState.Iniciando);
         CarregarCena("Splash");
     }
 
     public void MudarEstado(GameState novoEstado)
     {
+        if (estadoAtual == novoEstado) return;
+
         estadoAtual = novoEstado;
         Debug.Log("Estado atual: " + estadoAtual);
     }
