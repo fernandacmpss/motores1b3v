@@ -1,73 +1,35 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum GameState
-{
-    Iniciando,
-    MenuPrincipal,
-    Gameplay
-}
-
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-
-    private GameState estadoAtual;
-
-    public GameState EstadoAtual
-    {
-        get { return estadoAtual; }
-    }
+    [Header("Configurações de Cena")]
+    [Tooltip("Nome da cena principal de Gameplay")]
+    public string GameplaySceneName = "Gameplay";
+    
+    [Tooltip("Nome da cena de interface (GUI)")]
+    public string GUISceneName = "GUI";
 
     private void Awake()
     {
-        // Singleton
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // Garante que o GameManager não seja destruído ao carregar novas cenas
+        DontDestroyOnLoad(this.gameObject);
     }
 
     private void Start()
     {
-        Debug.Log("Estado atual: " + estadoAtual);
-
-        MudarEstado(GameState.Iniciando);
-        CarregarCena("Splash");
+        // Ao iniciar a cena _Boot, carregamos o jogo
+        CarregarJogo();
     }
 
-    public void MudarEstado(GameState novoEstado)
+    public void CarregarJogo()
     {
-        if (estadoAtual == novoEstado) return;
+        // 1. Carrega a cena de Gameplay como a cena principal (limpa tudo antes)
+        SceneManager.LoadScene(GameplaySceneName, LoadSceneMode.Single);
 
-        estadoAtual = novoEstado;
-        Debug.Log("Estado atual: " + estadoAtual);
-    }
-
-    public void CarregarCena(string nomeCena)
-    {
-        Debug.Log("Carregando cena: " + nomeCena);
-        SceneManager.LoadScene(nomeCena);
-    }
-
-    public void IniciarJogo()
-    {
-        MudarEstado(GameState.Gameplay);
-        CarregarCena("GetStarted_Scene");
-    }
-
-    public void IrParaMenu()
-    {
-        MudarEstado(GameState.MenuPrincipal);
-        CarregarCena("MenuPrincipal");
-    }
-
-    public void SairJogo()
-    {
-        Application.Quit();
+        // 2. Carrega a cena de GUI de forma aditiva (sobrepondo a Gameplay)
+        SceneManager.LoadScene(GUISceneName, LoadSceneMode.Additive);
+        
+        Debug.Log("Cenas carregadas com sucesso!");
     }
 }
